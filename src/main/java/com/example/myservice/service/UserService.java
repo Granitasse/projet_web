@@ -5,16 +5,18 @@ import com.example.myservice.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService implements UserDetailsService {
+    private final PasswordEncoder encoder;
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(PasswordEncoder encoder, UserRepository userRepository) {
+        this.encoder = encoder;
         this.userRepository = userRepository;
     }
-
 
     public void newUser(User user) {
         if (userExist(user)) {
@@ -32,7 +34,7 @@ public class UserService implements UserDetailsService {
     }
 
     private void saveUser(User user) {
-        user.setPassword("{noop}" + user.getPassword());
+        user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
