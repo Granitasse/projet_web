@@ -1,5 +1,6 @@
 package com.example.myservice.service;
 
+import com.example.myservice.controller.dto.UserDTO;
 import com.example.myservice.repository.UserRepository;
 import com.example.myservice.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -36,6 +39,14 @@ public class UserService implements UserDetailsService {
     private void saveUser(User user) {
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
+    }
+
+    public void updateUser(User user){
+        (userExist(user))
+    }
+
+    public List<UserDTO> listUsers(){
+        return userRepository.findAll().stream().map(user -> new UserDTO(user.getUsername(),user.isAdmin())).toList();
     }
 
     @Override
