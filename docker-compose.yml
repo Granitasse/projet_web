@@ -1,5 +1,8 @@
 version: '3.8'
 
+networks:
+  progweb_network : { }
+
 services:
   progweb:
     image: openjdk:17-oracle
@@ -7,9 +10,12 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./MyService/build/libs/myservice-0.0.1-SNAPSHOT.jar:/app.jar
+      - ./build/libs/myservice-0.0.1-SNAPSHOT.jar:/app.jar
     command: ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
-
+    networks:
+      progweb_network:
+        aliases:
+          - pw_be
   db:
     image: mysql:9-oracle
     container_name: progweb_db
@@ -22,6 +28,10 @@ services:
       - "3306:3306"
     volumes:
       - mysql_database:/var/lib/mysql
+    networks:
+      progweb_network:
+        aliases:
+          - pw_db
 
 volumes:
   mysql_database:
