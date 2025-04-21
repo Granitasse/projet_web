@@ -41,8 +41,15 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    public void deleteUser(String username){
+        userRepository.deleteById(username);
+    }
+
     public void updateUser(User user){
-        (userExist(user))
+        User dbUser = userRepository.getUserByUsername(user.getUsername()).orElse(user);
+        dbUser.setPassword(user.getPassword());
+        dbUser.setAdmin(user.isAdmin());
+        saveUser(dbUser);
     }
 
     public List<UserDTO> listUsers(){
@@ -51,7 +58,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("coucou");
+
         var user = userRepository.getUserByUsername(username)
                                  .orElseThrow(() -> new UsernameNotFoundException(username));
 

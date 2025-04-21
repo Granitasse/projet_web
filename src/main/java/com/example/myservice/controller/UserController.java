@@ -21,8 +21,4 @@ public class UserController {
         userService.newUser(user);
     }
 
-    @GetMapping("/users")
-    public List<UserDTO> printUser() {
-        return userService.listUsers();
-    }
 }

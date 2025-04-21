@@ -15,10 +15,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(c->c.disable())
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/", "/home").permitAll()
-                        .requestMatchers("/users").hasAuthority("ADMIN")
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
