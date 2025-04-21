@@ -1,7 +1,7 @@
 package com.example.myservice.service;
 
 import com.example.myservice.repository.UserRepository;
-import org.springframework.security.core.userdetails.User;
+import com.example.myservice.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,17 +15,39 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+
+    public void newUser(User user) {
+        if (userExist(user)) {
+            throw new IllegalArgumentException("Utilisateur déjà existant");
+        }
+        if (user.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Mot de passe vide");
+        }
+        user.setAdmin(false);
+        saveUser(user);
+    }
+
+    public boolean userExist(User user) {
+        return userRepository.getUserByUsername(user.getUsername()).isPresent();
+    }
+
+    private void saveUser(User user) {
+        user.setPassword("{noop}" + user.getPassword());
+        userRepository.save(user);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("coucou");
-        var user = userRepository.getUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        var user = userRepository.getUserByUsername(username)
+                                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
         String[] authorities = user.isAdmin() ? new String[]{"ADMIN"} : new String[0];
 
-        return User.builder()
-                   .username(user.getUsername())
-                   .password(user.getPassword())
-                   .authorities(authorities)
-                   .build();
+        return org.springframework.security.core.userdetails.User.builder()
+                                                                 .username(user.getUsername())
+                                                                 .password(user.getPassword())
+                                                                 .authorities(authorities)
+                                                                 .build();
     }
 }
