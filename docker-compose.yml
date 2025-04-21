@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  progweb:
+    image: openjdk:17-oracle
+    container_name: progweb_app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./MyService/build/libs/myservice-0.0.1-SNAPSHOT.jar:/app.jar
+    command: ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+
+  db:
+    image: mysql:9-oracle
+    container_name: progweb_db
+    environment:
+      MYSQL_DATABASE: database
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: admin
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_database:/var/lib/mysql
+
+volumes:
+  mysql_database:

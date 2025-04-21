@@ -1,0 +1,22 @@
+spring:
+  mvc:
+    log-request-details: true
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/database
+    password: admin
+    username: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+progweb:
+  security:
+    private-key: "Bob"
+
+logging:
+  level:
+    web: DEBUG
+
+server:
+  port: 8090
